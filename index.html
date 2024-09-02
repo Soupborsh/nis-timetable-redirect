@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>timetable-redirector</title>
+</head>
+<body>
+  <h2>Вы будете перенаправлены на расписание 9H класса через <span id="count">0</span> секунд</h2>
+  <script>
+    // get week number
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), 0, 1);
+    const week = Math.ceil((((now.getTime() - firstDay.getTime()) / 86400000) + firstDay.getDay() + 1) / 7);
+    
+    let redirectUrl = `https://nisphmastana.edupage.org/timetable/view.php?week=2024-W${week}&class=-27`;
+
+    if (performance.navigation.type === 2) {
+      // If user pressed back button, wait 3 seconds before redirecting
+      let countdown = 3;
+      document.getElementById('count').innerHTML = countdown;
+
+      let intervalId = setInterval(() => {
+        countdown--;
+        document.getElementById('count').innerHTML = countdown;
+
+        if (countdown === 0) {
+          clearInterval(intervalId);
+          window.location.replace(redirectUrl);
+        }
+      }, 1000);
+    } else {
+      // If user didn't press the back button, redirect immediately
+      window.location.replace(redirectUrl);
+    }
+    
+  </script>
+</body>
+</html>
