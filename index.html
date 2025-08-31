@@ -1,3 +1,18 @@
+<!--
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,15 +23,102 @@
 </head>
 
 <body>
-    <h2>Вы будете перенаправлены на расписание 9H класса через <span id="count">0</span> секунд</h2>
+    <h2>Вы будете перенаправлены на расписание <span id="class_name">?</span> класса через <span id="count">0</span>
+        секунд</h2>
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // These ids seem to be random and change every year.
+        // I filled this manually
+        // TODO: automate this
+        const class_map = new Map([
+            ["7A", 126],
+            ["7B", 127],
+            ["7C", 128],
+            ["7D", 129],
+            ["7E", 130],
+            ["7F", 131],
+            ["7G", 132],
+            ["7H", 133],
+            ["7I", 134],
+            ["7K", 135],
+            ["7L", 136],
+            ["8A", 80],
+            ["8B", 81],
+            ["8C", 82],
+            ["8D", 83],
+            ["8E", 84],
+            ["8F", 85],
+            ["8G", 87],
+            ["8H", 88],
+            ["8I", 89],
+            ["8K", 90],
+            ["8L", 86],
+            ["9A", 91],
+            ["9B", 92],
+            ["9C", 93],
+            ["9D", 94],
+            ["9E", 96],
+            ["9F", 97],
+            ["9G", 98],
+            ["9H", 95],
+            ["10A", 37],
+            ["10B", 29],
+            ["10C", 30],
+            ["10D", 31],
+            ["10E", 32],
+            ["10F", 33],
+            ["10G", 34],
+            ["10H", 35],
+            ["11A", 28],
+            ["11B", 99],
+            ["11C", 100],
+            ["11D", 101],
+            ["11E", 102],
+            ["11F", 103],
+            ["11G", 104],
+            ["11H", 105],
+            ["11K", 106],
+            ["11L", 107],
+            ["11M", 108],
+            ["11N", 109],
+            ["11O", 110],
+            ["11P", 111],
+            ["11Q", 112],
+            ["12A", 113],
+            ["12B", 114],
+            ["12C", 115],
+            ["12D", 116],
+            ["12E", 117],
+            ["12F", 118],
+            ["12G", 119],
+            ["12H", 120],
+            ["12I", 121],
+            ["12K", 122],
+            ["12L", 123],
+            ["12M", 124],
+            ["12N", 125],
+        ]);
+
+        let class_id = class_map.get("10H");;
+
+        if (urlParams.has("class") && class_map.has(urlParams.get("class"))) {
+            class_id = class_map.get(urlParams.get("class"));
+            document.getElementById("class_name").innerHTML = urlParams.get("class");
+        } else {
+            console.error("Invalid or no class name, redirecting to default one");
+            document.getElementById("class_name").innerHTML = "10H";
+        }
+
         // get current year and week number
         const now = new Date();
         const year = now.getFullYear();
         const firstDay = new Date(now.getFullYear(), 0, 1);
         const week = Math.ceil((((now.getTime() - firstDay.getTime()) / 86400000) + firstDay.getDay() + 1) / 7);
 
-        redirectUrl = `https://nisphmastana.edupage.org/timetable/view.php?week=${year}-W${week < 10 ? '0' + week : week}&class=-27`;
+        redirectUrl = `https://nisphmastana.edupage.org/timetable/view.php?week=${year}-W${week < 10 ? '0' + week : week}&class=-${class_id}`;
+
+        console.log(redirectUrl);
 
         if (performance.navigation.type === 2) {
             // If user pressed back button, wait 3 seconds before redirecting
